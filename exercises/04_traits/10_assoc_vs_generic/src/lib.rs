@@ -13,6 +13,30 @@
 // You don't have to though: it's perfectly okay to write three separate
 // implementations manually. Venture further only if you're curious.
 
+pub trait Power<Exponent = Self> {
+    type Output;
+
+    fn power(&self, n: Exponent) -> Self::Output;
+}
+
+macro_rules! impl_power_for_u32 {
+    ($t:ty, $conversion:expr) => {
+        impl Power<$t> for u32 {
+            type Output = u32;
+
+            fn power(&self, n: $t) -> Self::Output {
+                self.pow($conversion(n))
+            }
+        }
+    };
+}
+
+// 실제 타입에 맞게 적절한 변환을 지정합니다.
+impl_power_for_u32!(u16, |n: u16| n as u32);
+impl_power_for_u32!(u32, |n: u32| n);
+impl_power_for_u32!(&u32, |n: &u32| *n);
+
+
 #[cfg(test)]
 mod tests {
     use super::Power;
